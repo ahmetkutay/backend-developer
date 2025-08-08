@@ -1,0 +1,54 @@
+{
+  "users": [
+    { "name": "admin", "password": "admin123", "tags": "administrator" }
+  ],
+  "vhosts": [
+    { "name": "/" }
+  ],
+  "permissions": [
+    { "user": "admin", "vhost": "/", "configure": ".*", "write": ".*", "read": ".*" }
+  ],
+  "exchanges": [
+    { "name": "orders", "vhost": "/", "type": "topic", "durable": true },
+    { "name": "orders.retry", "vhost": "/", "type": "topic", "durable": true },
+    { "name": "inventory", "vhost": "/", "type": "topic", "durable": true },
+    { "name": "inventory.retry", "vhost": "/", "type": "topic", "durable": true }
+  ],
+  "queues": [
+    { "name": "order.created.q", "vhost": "/", "durable": true, "arguments": { "x-dead-letter-exchange": "orders.retry" } },
+    { "name": "order.created.q.retry", "vhost": "/", "durable": true, "arguments": { "x-dead-letter-exchange": "orders", "x-message-ttl": 10000 } },
+    { "name": "order.created.q.dlq", "vhost": "/", "durable": true },
+
+    { "name": "orders.cancelled.q", "vhost": "/", "durable": true, "arguments": { "x-dead-letter-exchange": "orders.retry" } },
+    { "name": "orders.cancelled.q.retry", "vhost": "/", "durable": true, "arguments": { "x-dead-letter-exchange": "orders", "x-message-ttl": 10000 } },
+    { "name": "orders.cancelled.q.dlq", "vhost": "/", "durable": true },
+
+    { "name": "inventory.reserve.requested.q", "vhost": "/", "durable": true, "arguments": { "x-dead-letter-exchange": "inventory.retry" } },
+    { "name": "inventory.reserve.requested.q.retry", "vhost": "/", "durable": true, "arguments": { "x-dead-letter-exchange": "inventory", "x-message-ttl": 10000 } },
+    { "name": "inventory.reserve.requested.q.dlq", "vhost": "/", "durable": true },
+
+    { "name": "inventory.reserve.approved.q", "vhost": "/", "durable": true, "arguments": { "x-dead-letter-exchange": "inventory.retry" } },
+    { "name": "inventory.reserve.approved.q.retry", "vhost": "/", "durable": true, "arguments": { "x-dead-letter-exchange": "inventory", "x-message-ttl": 10000 } },
+    { "name": "inventory.reserve.approved.q.dlq", "vhost": "/", "durable": true },
+
+    { "name": "inventory.reserve.rejected.q", "vhost": "/", "durable": true, "arguments": { "x-dead-letter-exchange": "inventory.retry" } },
+    { "name": "inventory.reserve.rejected.q.retry", "vhost": "/", "durable": true, "arguments": { "x-dead-letter-exchange": "inventory", "x-message-ttl": 10000 } },
+    { "name": "inventory.reserve.rejected.q.dlq", "vhost": "/", "durable": true }
+  ],
+  "bindings": [
+    { "source": "orders", "vhost": "/", "destination": "order.created.q", "destination_type": "queue", "routing_key": "orders.created.v1" },
+    { "source": "orders.retry", "vhost": "/", "destination": "order.created.q.retry", "destination_type": "queue", "routing_key": "orders.created.v1" },
+
+    { "source": "orders", "vhost": "/", "destination": "orders.cancelled.q", "destination_type": "queue", "routing_key": "orders.cancelled.v1" },
+    { "source": "orders.retry", "vhost": "/", "destination": "orders.cancelled.q.retry", "destination_type": "queue", "routing_key": "orders.cancelled.v1" },
+
+    { "source": "inventory", "vhost": "/", "destination": "inventory.reserve.requested.q", "destination_type": "queue", "routing_key": "inventory.reserve.requested.v1" },
+    { "source": "inventory.retry", "vhost": "/", "destination": "inventory.reserve.requested.q.retry", "destination_type": "queue", "routing_key": "inventory.reserve.requested.v1" },
+
+    { "source": "inventory", "vhost": "/", "destination": "inventory.reserve.approved.q", "destination_type": "queue", "routing_key": "inventory.reserve.approved.v1" },
+    { "source": "inventory.retry", "vhost": "/", "destination": "inventory.reserve.approved.q.retry", "destination_type": "queue", "routing_key": "inventory.reserve.approved.v1" },
+
+    { "source": "inventory", "vhost": "/", "destination": "inventory.reserve.rejected.q", "destination_type": "queue", "routing_key": "inventory.reserve.rejected.v1" },
+    { "source": "inventory.retry", "vhost": "/", "destination": "inventory.reserve.rejected.q.retry", "destination_type": "queue", "routing_key": "inventory.reserve.rejected.v1" }
+  ]
+}
