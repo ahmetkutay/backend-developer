@@ -1,0 +1,33 @@
+{
+  "name": "notification-service",
+  "version": "1.0.0",
+  "description": "Event-driven notification service for e-commerce platform",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node src/index.ts",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "notification",
+    "rabbitmq",
+    "microservice",
+    "typescript"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "amqplib": "^0.10.3",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "@types/amqplib": "^0.10.1",
+    "@types/node": "^20.5.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.1.6"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
