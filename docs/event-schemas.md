@@ -151,3 +151,13 @@ Headers (example): { "x-group-id": "ord_12ab34cd", "x-correlation-id": "corr-not
 - There is a reserved inventory.reserve.requested.v1 routing key and queue in definitions.json for future use; it is not produced by the current code.
 - All services persist incoming/outgoing events to their MongoDB "events" collections with a unique index on eventId for idempotency.
 - Consumers should treat event handling as idempotent where possible. Replayed or retried events may be delivered more than once.
+
+
+## Runtime validation (Zod)
+- All consumers validate incoming events at runtime using Zod.safeParse against the service-local schemas. Invalid messages are not retried infinitely; handlers log the reason and route them to DLQ via the consumer's dlq helper (ack + publish to <queue>.dlq per MessageBus logic).
+- All producers validate outgoing event envelopes before persisting to the event store and before publishing:
+  - order-service: validates orders.created.v1 and orders.cancelled.v1.
+  - inventory-service: validates inventory.reserve.approved.v1 and inventory.reserve.rejected.v1.
+  - notification-service: validates notification.sent.v1.
+- If an outgoing event fails validation, the service logs the error and skips publishing (order-service returns HTTP 500 with error "invalid_event_envelope" for create/cancel endpoints). This prevents malformed events from entering the system.
+- Schemas live under each service at src/events/schemas and are versioned (v1). When evolving schemas, add new versions (e.g., *.v2) and keep backward compatibility for existing consumers.

@@ -6,6 +6,7 @@ import { MessageBus } from './mq/bus';
 import { randomUUID } from 'crypto';
 import { OrdersCreatedV1Schema, OrdersCancelledV1Schema } from './events/schemas/orders';
 import { InventoryReserveApprovedV1Schema, InventoryReserveRejectedV1Schema } from './events/schemas/inventory';
+import { NotificationSentV1Schema } from './events/schemas/notification';
 import { connectMongo, closeMongo, Mongo } from './db/mongo';
 import { EventsRepo } from './repositories/eventsRepo';
 
@@ -64,12 +65,19 @@ async function startConsumers() {
           channel: 'log',
         },
       };
-      await bus!.publish('notifications', 'notification.sent.v1', event, {
-        'x-correlation-id': event.correlationId,
+      // Validate notification event before publish
+      const parsed = NotificationSentV1Schema.safeParse(event as any);
+      if (!parsed.success) {
+        logger.error({ details: parsed.error.flatten() }, '[Notification] invalid notification.sent event envelope; skip publish');
+        return;
+      }
+      const validEvent = parsed.data as any;
+      await bus!.publish('notifications', 'notification.sent.v1', validEvent, {
+        'x-correlation-id': validEvent.correlationId,
         'x-group-id': orderId,
       });
       // Append outgoing event (idempotent)
-      try { await eventsRepo!.append(event as any); } catch (e) { logger.warn({ e, eventId: (event as any)?.eventId }, '[Notification] append outgoing notification event failed'); }
+      try { await eventsRepo!.append(validEvent as any); } catch (e) { logger.warn({ e, eventId: (validEvent as any)?.eventId }, '[Notification] append outgoing notification event failed'); }
       logger.info({ orderId, kind }, '[Notification] sent');
     };
 

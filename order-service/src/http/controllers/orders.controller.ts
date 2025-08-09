@@ -5,6 +5,7 @@ import logger from '../../logger';
 import { EventsRepo, EventEnvelope } from '../../repositories/eventsRepo';
 import { OrdersRepo, OrderDoc, OrderItem } from '../../repositories/ordersRepo';
 import { MessageBus } from '../../mq/bus';
+import { OrdersCreatedV1Schema, OrdersCancelledV1Schema } from '../../events/schemas/orders';
 
 const OrderItemSchema = z.object({
   productId: z.string().min(1),
@@ -99,10 +100,18 @@ export function createOrdersController(getDeps: () => OrdersControllerDeps | nul
         },
       };
 
+      // Validate event envelope against schema before append/publish
+      const eventParse = OrdersCreatedV1Schema.safeParse(event as any);
+      if (!eventParse.success) {
+        logger.error({ details: eventParse.error.flatten() }, '[Order] invalid orders.created event envelope');
+        return res.status(500).json({ error: 'invalid_event_envelope' });
+      }
+      const validEvent = eventParse.data as any;
+
       // Append event (idempotent on eventId)
-      await eventsRepo.append(event);
+      await eventsRepo.append(validEvent);
       // Publish event
-      await bus.publish('orders', 'orders.created.v1', event, {
+      await bus.publish('orders', 'orders.created.v1', validEvent, {
         'x-group-id': orderId,
         'x-correlation-id': correlationId,
       });
@@ -142,8 +151,16 @@ export function createOrdersController(getDeps: () => OrdersControllerDeps | nul
         payload: { orderId, reason },
       };
 
-      await eventsRepo.append(event);
-      await bus.publish('orders', 'orders.cancelled.v1', event, {
+      // Validate event envelope against schema before append/publish
+      const eventParse = OrdersCancelledV1Schema.safeParse(event as any);
+      if (!eventParse.success) {
+        logger.error({ details: eventParse.error.flatten() }, '[Order] invalid orders.cancelled event envelope');
+        return res.status(500).json({ error: 'invalid_event_envelope' });
+      }
+      const validEvent = eventParse.data as any;
+
+      await eventsRepo.append(validEvent);
+      await bus.publish('orders', 'orders.cancelled.v1', validEvent, {
         'x-group-id': orderId,
         'x-correlation-id': correlationId,
       });

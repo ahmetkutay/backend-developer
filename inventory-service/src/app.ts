@@ -5,6 +5,7 @@ import { connectRabbit, closeRabbit, MQ } from './mq/connection';
 import { MessageBus } from './mq/bus';
 import { randomUUID } from 'crypto';
 import { OrdersCreatedV1Schema, OrdersCancelledV1Schema } from './events/schemas/orders';
+import { InventoryReserveApprovedV1Schema, InventoryReserveRejectedV1Schema } from './events/schemas/inventory';
 import { connectMongo, closeMongo, Mongo } from './db/mongo';
 import { EventsRepo } from './repositories/eventsRepo';
 import { buildReadiness } from './health/readiness';
@@ -72,13 +73,24 @@ async function startConsumers() {
               },
             };
 
-        await bus!.publish('inventory', route, event, {
+        // Validate outgoing event against schema before publish
+        const outParsed = approved
+          ? InventoryReserveApprovedV1Schema.safeParse(event as any)
+          : InventoryReserveRejectedV1Schema.safeParse(event as any);
+        if (!outParsed.success) {
+          logger.error({ details: outParsed.error.flatten(), approved }, '[Inventory] invalid outgoing inventory event envelope; skip publish');
+          ack();
+          return;
+        }
+        const validEvent = outParsed.data as any;
+
+        await bus!.publish('inventory', route, validEvent, {
           'x-group-id': orderId,
-          'x-correlation-id': event.correlationId,
+          'x-correlation-id': validEvent.correlationId,
         });
 
         // Append outgoing event (idempotent)
-        try { await eventsRepo!.append(event as any); } catch (e) { logger.warn({ e, eventId: (event as any)?.eventId }, '[Inventory] append outgoing inventory event failed'); }
+        try { await eventsRepo!.append(validEvent as any); } catch (e) { logger.warn({ e, eventId: (validEvent as any)?.eventId }, '[Inventory] append outgoing inventory event failed'); }
 
         logger.info({ orderId, approved, route }, '[Inventory] processed order');
         ack();

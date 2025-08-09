@@ -4,26 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b8573b2f-7a20-4fa4-8482-921b8e65864b" name="Changes" comment="feat: add service health checks and environment configurations for order, inventory, and notification services">
+    <list default="true" id="b8573b2f-7a20-4fa4-8482-921b8e65864b" name="Changes" comment="feat: implement order management with event sourcing and circuit breaker patterns">
+      <change afterPath="$PROJECT_DIR$/notification-service/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/order-service/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inventory-service/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/inventory-service/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/event-schemas.md" beforeDir="false" afterPath="$PROJECT_DIR$/docs/event-schemas.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/inventory-service/src/app.ts" beforeDir="false" afterPath="$PROJECT_DIR$/inventory-service/src/app.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inventory-service/src/config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/inventory-service/src/config.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inventory-service/src/health/readiness.ts" beforeDir="false" afterPath="$PROJECT_DIR$/inventory-service/src/health/readiness.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inventory-service/src/http/server.ts" beforeDir="false" afterPath="$PROJECT_DIR$/inventory-service/src/http/server.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inventory-service/src/mq/bus.ts" beforeDir="false" afterPath="$PROJECT_DIR$/inventory-service/src/mq/bus.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mongodb/init-mongo.js" beforeDir="false" afterPath="$PROJECT_DIR$/mongodb/init-mongo.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/notification-service/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/notification-service/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/notification-service/src/app.ts" beforeDir="false" afterPath="$PROJECT_DIR$/notification-service/src/app.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/notification-service/src/config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/notification-service/src/config.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/notification-service/src/http/server.ts" beforeDir="false" afterPath="$PROJECT_DIR$/notification-service/src/http/server.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/order-service/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/order-service/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/order-service/src/app.ts" beforeDir="false" afterPath="$PROJECT_DIR$/order-service/src/app.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/order-service/src/config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/order-service/src/config.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/order-service/src/health/readiness.ts" beforeDir="false" afterPath="$PROJECT_DIR$/order-service/src/health/readiness.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/order-service/src/http/server.ts" beforeDir="false" afterPath="$PROJECT_DIR$/order-service/src/http/server.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/order-service/src/mq/bus.ts" beforeDir="false" afterPath="$PROJECT_DIR$/order-service/src/mq/bus.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/rabbitmq/definitions.json" beforeDir="false" afterPath="$PROJECT_DIR$/rabbitmq/definitions.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/order-service/src/http/controllers/orders.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/order-service/src/http/controllers/orders.controller.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -83,26 +71,27 @@
     <option name="showLibraryContents" value="true" />
     <option name="showMembers" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;SHELLCHECK.PATH&quot;: &quot;/Users/kutaykaracair/Library/Application Support/JetBrains/WebStorm2025.2/plugins/Shell Script/shellcheck&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/kutaykaracair/WebstormProjects/backend-developer/task&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
-    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "SHELLCHECK.PATH": "/Users/kutaykaracair/Library/Application Support/JetBrains/WebStorm2025.2/plugins/Shell Script/shellcheck",
+    "git-widget-placeholder": "master",
+    "junie.onboarding.icon.badge.shown": "true",
+    "last_opened_file_path": "/Users/kutaykaracair/WebstormProjects/backend-developer/order-service",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "to.speed.mode.migration.done": "true",
+    "ts.external.directory.path": "/Users/kutaykaracair/WebstormProjects/backend-developer/inventory-service/node_modules/typescript/lib",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/task" />
@@ -124,7 +113,8 @@
       <updated>1754601327698</updated>
       <workItem from="1754601328749" duration="7953000" />
       <workItem from="1754641608917" duration="4611000" />
-      <workItem from="1754647164793" duration="35320000" />
+      <workItem from="1754647164793" duration="35365000" />
+      <workItem from="1754764813300" duration="1928000" />
     </task>
     <task id="LOCAL-00001" summary="add initial project setup with Docker, Redis, MongoDB, and logging configuration">
       <option name="closed" value="true" />
@@ -142,7 +132,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754679372507</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="feat: implement order management with event sourcing and circuit breaker patterns">
+      <option name="closed" value="true" />
+      <created>1754764798734</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1754764798734</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -151,7 +149,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="add initial project setup with Docker, Redis, MongoDB, and logging configuration" />
     <MESSAGE value="feat: add service health checks and environment configurations for order, inventory, and notification services" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: add service health checks and environment configurations for order, inventory, and notification services" />
+    <MESSAGE value="feat: implement order management with event sourcing and circuit breaker patterns" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: implement order management with event sourcing and circuit breaker patterns" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
