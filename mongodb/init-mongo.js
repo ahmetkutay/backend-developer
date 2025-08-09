@@ -11,15 +11,20 @@ dbOrders.createCollection('orders');
 dbOrders.orders.createIndex({ orderId: 1 }, { unique: true });
 dbOrders.orders.createIndex({ status: 1 }, { background: true });
 
-// Inventory DB: reservations
+// Inventory DB: reservations + event store
 var dbInventory = db.getSiblingDB('inventory');
 
 dbInventory.createCollection('reservations');
 dbInventory.reservations.createIndex({ reservationId: 1 }, { unique: true });
 dbInventory.reservations.createIndex({ orderId: 1 }, { background: true });
 
+// Add event store for inventory
+try { dbInventory.createCollection('events'); } catch (e) {}
+try { dbInventory.events.createIndex({ eventId: 1 }, { unique: true }); } catch (e) {}
+try { dbInventory.events.createIndex({ 'payload.orderId': 1 }, { background: true }); } catch (e) {}
+
 // Notifications DB: event store (optional)
 var dbNotifications = db.getSiblingDB('notifications');
 
-dbNotifications.createCollection('events');
-dbNotifications.events.createIndex({ eventId: 1 }, { unique: true });
+try { dbNotifications.createCollection('events'); } catch (e) {}
+try { dbNotifications.events.createIndex({ eventId: 1 }, { unique: true }); } catch (e) {}

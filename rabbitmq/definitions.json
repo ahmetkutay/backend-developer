@@ -12,7 +12,9 @@
     { "name": "orders", "vhost": "/", "type": "topic", "durable": true },
     { "name": "orders.retry", "vhost": "/", "type": "topic", "durable": true },
     { "name": "inventory", "vhost": "/", "type": "topic", "durable": true },
-    { "name": "inventory.retry", "vhost": "/", "type": "topic", "durable": true }
+    { "name": "inventory.retry", "vhost": "/", "type": "topic", "durable": true },
+    { "name": "notifications", "vhost": "/", "type": "topic", "durable": true },
+    { "name": "notifications.retry", "vhost": "/", "type": "topic", "durable": true }
   ],
   "queues": [
     { "name": "order.created.q", "vhost": "/", "durable": true, "arguments": { "x-dead-letter-exchange": "orders.retry" } },
@@ -33,7 +35,27 @@
 
     { "name": "inventory.reserve.rejected.q", "vhost": "/", "durable": true, "arguments": { "x-dead-letter-exchange": "inventory.retry" } },
     { "name": "inventory.reserve.rejected.q.retry", "vhost": "/", "durable": true, "arguments": { "x-dead-letter-exchange": "inventory", "x-message-ttl": 10000 } },
-    { "name": "inventory.reserve.rejected.q.dlq", "vhost": "/", "durable": true }
+    { "name": "inventory.reserve.rejected.q.dlq", "vhost": "/", "durable": true },
+
+    { "name": "orders.created.notification.q", "vhost": "/", "durable": true, "arguments": { "x-dead-letter-exchange": "orders.retry" } },
+    { "name": "orders.created.notification.q.retry", "vhost": "/", "durable": true, "arguments": { "x-dead-letter-exchange": "orders", "x-message-ttl": 10000 } },
+    { "name": "orders.created.notification.q.dlq", "vhost": "/", "durable": true },
+
+    { "name": "orders.cancelled.notification.q", "vhost": "/", "durable": true, "arguments": { "x-dead-letter-exchange": "orders.retry" } },
+    { "name": "orders.cancelled.notification.q.retry", "vhost": "/", "durable": true, "arguments": { "x-dead-letter-exchange": "orders", "x-message-ttl": 10000 } },
+    { "name": "orders.cancelled.notification.q.dlq", "vhost": "/", "durable": true },
+
+    { "name": "inventory.reserve.approved.notification.q", "vhost": "/", "durable": true, "arguments": { "x-dead-letter-exchange": "inventory.retry" } },
+    { "name": "inventory.reserve.approved.notification.q.retry", "vhost": "/", "durable": true, "arguments": { "x-dead-letter-exchange": "inventory", "x-message-ttl": 10000 } },
+    { "name": "inventory.reserve.approved.notification.q.dlq", "vhost": "/", "durable": true },
+
+    { "name": "inventory.reserve.rejected.notification.q", "vhost": "/", "durable": true, "arguments": { "x-dead-letter-exchange": "inventory.retry" } },
+    { "name": "inventory.reserve.rejected.notification.q.retry", "vhost": "/", "durable": true, "arguments": { "x-dead-letter-exchange": "inventory", "x-message-ttl": 10000 } },
+    { "name": "inventory.reserve.rejected.notification.q.dlq", "vhost": "/", "durable": true },
+
+    { "name": "notification.sent.q", "vhost": "/", "durable": true, "arguments": { "x-dead-letter-exchange": "notifications.retry" } },
+    { "name": "notification.sent.q.retry", "vhost": "/", "durable": true, "arguments": { "x-dead-letter-exchange": "notifications", "x-message-ttl": 10000 } },
+    { "name": "notification.sent.q.dlq", "vhost": "/", "durable": true }
   ],
   "bindings": [
     { "source": "orders", "vhost": "/", "destination": "order.created.q", "destination_type": "queue", "routing_key": "orders.created.v1" },
@@ -49,6 +71,21 @@
     { "source": "inventory.retry", "vhost": "/", "destination": "inventory.reserve.approved.q.retry", "destination_type": "queue", "routing_key": "inventory.reserve.approved.v1" },
 
     { "source": "inventory", "vhost": "/", "destination": "inventory.reserve.rejected.q", "destination_type": "queue", "routing_key": "inventory.reserve.rejected.v1" },
-    { "source": "inventory.retry", "vhost": "/", "destination": "inventory.reserve.rejected.q.retry", "destination_type": "queue", "routing_key": "inventory.reserve.rejected.v1" }
+    { "source": "inventory.retry", "vhost": "/", "destination": "inventory.reserve.rejected.q.retry", "destination_type": "queue", "routing_key": "inventory.reserve.rejected.v1" },
+
+    { "source": "orders", "vhost": "/", "destination": "orders.created.notification.q", "destination_type": "queue", "routing_key": "orders.created.v1" },
+    { "source": "orders.retry", "vhost": "/", "destination": "orders.created.notification.q.retry", "destination_type": "queue", "routing_key": "orders.created.v1" },
+
+    { "source": "orders", "vhost": "/", "destination": "orders.cancelled.notification.q", "destination_type": "queue", "routing_key": "orders.cancelled.v1" },
+    { "source": "orders.retry", "vhost": "/", "destination": "orders.cancelled.notification.q.retry", "destination_type": "queue", "routing_key": "orders.cancelled.v1" },
+
+    { "source": "inventory", "vhost": "/", "destination": "inventory.reserve.approved.notification.q", "destination_type": "queue", "routing_key": "inventory.reserve.approved.v1" },
+    { "source": "inventory.retry", "vhost": "/", "destination": "inventory.reserve.approved.notification.q.retry", "destination_type": "queue", "routing_key": "inventory.reserve.approved.v1" },
+
+    { "source": "inventory", "vhost": "/", "destination": "inventory.reserve.rejected.notification.q", "destination_type": "queue", "routing_key": "inventory.reserve.rejected.v1" },
+    { "source": "inventory.retry", "vhost": "/", "destination": "inventory.reserve.rejected.notification.q.retry", "destination_type": "queue", "routing_key": "inventory.reserve.rejected.v1" },
+
+    { "source": "notifications", "vhost": "/", "destination": "notification.sent.q", "destination_type": "queue", "routing_key": "notification.sent.v1" },
+    { "source": "notifications.retry", "vhost": "/", "destination": "notification.sent.q.retry", "destination_type": "queue", "routing_key": "notification.sent.v1" }
   ]
 }

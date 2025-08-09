@@ -1,5 +1,7 @@
 import { Channel, ConsumeMessage } from 'amqplib';
 import logger from '../logger';
+import { config } from '../config';
+import { executeWithBreaker } from '../utils/breaker';
 
 export type Handler = (
   msg: any,
@@ -12,16 +14,25 @@ export class MessageBus {
 
   async publish(exchange: string, routingKey: string, event: any, headers: Record<string, any> = {}) {
     const payload = Buffer.from(JSON.stringify(event));
-    const ok = this.ch.publish(exchange, routingKey, payload, {
-      contentType: 'application/json',
-      persistent: true,
-      headers,
-    });
-    if (!ok) logger.warn({ routingKey }, '[MQ] publish backpressure');
+    const options = {
+      timeout: config.MQ_BREAKER_TIMEOUT_MS,
+      resetTimeout: config.MQ_BREAKER_RESET_TIMEOUT_MS,
+      errorThresholdPercentage: config.MQ_BREAKER_ERROR_THRESHOLD_PERCENT,
+      volumeThreshold: config.MQ_BREAKER_VOLUME_THRESHOLD,
+    };
+    await executeWithBreaker('mq.publish', async () => {
+      const ok = this.ch.publish(exchange, routingKey, payload, {
+        contentType: 'application/json',
+        persistent: true,
+        headers,
+      });
+      if (!ok) logger.warn({ routingKey }, '[MQ] publish backpressure');
+      return ok;
+    }, options, config.MQ_BREAKER_ENABLED);
   }
 
   async consume(queue: string, handler: Handler, options?: { maxRetries?: number }) {
-    const maxRetries = options?.maxRetries ?? 3;
+    const maxRetries = options?.maxRetries ?? config.CONSUMER_MAX_RETRIES;
     await this.ch.consume(
       queue,
       async (msg: ConsumeMessage | null) => {

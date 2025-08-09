@@ -1,12 +1,12 @@
 import express from 'express';
 
-export function createServer(health: () => Promise<boolean>) {
+export function createServer(liveness: () => Promise<boolean>, readiness?: () => Promise<boolean>) {
   const app = express();
   app.use(express.json());
 
   app.get('/health', async (_req, res) => {
     try {
-      const ok = await health();
+      const ok = await liveness();
       res.status(ok ? 200 : 500).json({
         status: ok ? 'ok' : 'fail',
         service: process.env.SERVICE_NAME || 'notification-service',
@@ -14,6 +14,16 @@ export function createServer(health: () => Promise<boolean>) {
       });
     } catch (e) {
       res.status(500).json({ status: 'fail' });
+    }
+  });
+
+  app.get('/ready', async (_req, res) => {
+    try {
+      const check = readiness || liveness;
+      const ok = await check();
+      res.status(ok ? 200 : 503).json({ status: ok ? 'ready' : 'not_ready' });
+    } catch (e) {
+      res.status(503).json({ status: 'not_ready' });
     }
   });
 
