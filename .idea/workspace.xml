@@ -4,14 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b8573b2f-7a20-4fa4-8482-921b8e65864b" name="Changes" comment="feat: implement order management with event sourcing and circuit breaker patterns">
-      <change afterPath="$PROJECT_DIR$/notification-service/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/order-service/.gitignore" afterDir="false" />
+    <list default="true" id="b8573b2f-7a20-4fa4-8482-921b8e65864b" name="Changes" comment="feat: add runtime validation for event envelopes in order and inventory services, add my thought">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/event-schemas.md" beforeDir="false" afterPath="$PROJECT_DIR$/docs/event-schemas.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inventory-service/src/app.ts" beforeDir="false" afterPath="$PROJECT_DIR$/inventory-service/src/app.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/notification-service/src/app.ts" beforeDir="false" afterPath="$PROJECT_DIR$/notification-service/src/app.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/order-service/src/http/controllers/orders.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/order-service/src/http/controllers/orders.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/my_own_thought.md" beforeDir="false" afterPath="$PROJECT_DIR$/docs/my_own_thought.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -94,6 +89,8 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/order-service" />
+      <recent name="$PROJECT_DIR$/notification-service" />
       <recent name="$PROJECT_DIR$/task" />
     </key>
   </component>
@@ -114,7 +111,7 @@
       <workItem from="1754601328749" duration="7953000" />
       <workItem from="1754641608917" duration="4611000" />
       <workItem from="1754647164793" duration="35365000" />
-      <workItem from="1754764813300" duration="1928000" />
+      <workItem from="1754764813300" duration="3244000" />
     </task>
     <task id="LOCAL-00001" summary="add initial project setup with Docker, Redis, MongoDB, and logging configuration">
       <option name="closed" value="true" />
@@ -140,7 +137,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754764798734</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="feat: add runtime validation for event envelopes in order and inventory services, add my thought">
+      <option name="closed" value="true" />
+      <created>1754766779464</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1754766779464</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -150,7 +155,8 @@
     <MESSAGE value="add initial project setup with Docker, Redis, MongoDB, and logging configuration" />
     <MESSAGE value="feat: add service health checks and environment configurations for order, inventory, and notification services" />
     <MESSAGE value="feat: implement order management with event sourcing and circuit breaker patterns" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: implement order management with event sourcing and circuit breaker patterns" />
+    <MESSAGE value="feat: add runtime validation for event envelopes in order and inventory services, add my thought" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: add runtime validation for event envelopes in order and inventory services, add my thought" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

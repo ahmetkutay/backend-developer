@@ -1,25 +1,28 @@
-# Kendi Düşüncelerim — Bu Projeyi Nasıl Ele Aldım
+# My Own Reflections: How I Approached This Project
 
-Bu projeyi, istenilen gereksinimleri dikkatle okuyup önceliklendirerek ele aldım. Normalde verilen süre 8 saat olsa da, günümüz teknolojilerinin sağladığı verimlilik sayesinde yapay zeka araçlarını kullanarak işi çok daha hızlı tamamlayabildim. Sonrasında sistemi nasıl daha da geliştirebileceğimi düşündüm ve bu aşamada yine yapay zeka araçlarından yararlanarak farklı senaryoları gözden geçirdim.
-Yapay zekayı kullanmaktaki amacım sadece “daha hızlı kod yazmak” değil; aynı zamanda klasik geliştirici bakış açısından bir adım geri çekilip daha sistemsel düşünmeyi, akışları uçtan uca tasarlamayı ve hata senaryolarını geniş açıyla ele almayı alışkanlık haline getirmekti.
-Sistemi birçok kez çalıştırıp akışları test ettim; kuyruk tanımları, retry/DLQ, idempotency ve temel sağlık kontrolleri gibi kritik konularda bir sorunla karşılaşmadım.
+I carefully read and prioritized the given requirements. Although I was given 8 hours, I was able to complete the work much faster thanks to modern technology and AI tools. Next, I considered how to further improve the system. At this stage, I leveraged AI tools again to explore different scenarios.
+I used AI not only to "write code faster," but also to take a step back from the classic developer perspective and think more systemically. This meant designing end-to-end flows and approaching error scenarios with a broader view.
+I ran the system multiple times and tested the flows. I did not encounter any issues in critical areas such as queue definitions, retry/DLQ, idempotency, and basic health checks.
 
-## Kullandığım Araçlar
+## Tools I Used:
+
 - JetBrains Junie
 - JetBrains AI Assistant Chat
 
-## Yaklaşımımın Özeti
-- Gereksinimleri maddelere ayırıp önceliklendirdim (mesajlaşma sadece MQ, çekirdek event akışları, retry/DLQ, idempotency, readiness/liveness).
-- Servis sınırları ve event akışlarını netleştirip, her akış için üretici/tüketici davranışlarını tanımladım.
-- Olay şemalarını (v1) belirleyip, üretim öncesi ve tüketim anında doğrulamayı ekledim (runtime validation), böylece hatalı payload’ların sisteme girmesini engelledim.
-- Dayanıklılık için retry/DLQ mantığı ve idempotent kayıt stratejisini uyguladım.
-- Docker Compose ile hızlı şekilde ortamı kaldırıp indirgeyebilecek bir geliştirme/demonstrasyon düzeni kurdum.
+## Summary of My Approach:
 
-## Doğrulama ve Kontroller
-- Servis readiness/liveness uçları üzerinden sağlık takibi yaptım.
-- Temel uçtan uca akışları (sipariş oluşturma/iptal, envanter onay/red, bildirim) hem HTTP hem de yardımcı script (scripts/mq-publish.sh) ile sınadım.
-- RabbitMQ UI üzerinden kuyruk/mesaj durumlarını gözlemledim; retry ve DLQ davranışlarını kontrol ettim.
+- I broke down the requirements into items and prioritized them (messaging was limited to MQ; core event flows were defined; retry/DLQ was specified; idempotency was defined; and readiness/liveness was defined).
+- I defined service boundaries and event flows, specifying producer/consumer behavior for each flow.
+- I determined event schemas (v1) and added runtime validation at production and consumption points to prevent invalid payloads from entering the system.
+- I implemented retry/DLQ logic and idempotent record strategies for resilience.
+- I used Docker Compose to quickly spin up and tear down the environment for development and demonstration purposes.
 
-Eğer amacınız benim yazılım bilgimi ölçmekse, memnuniyetle aynı görevi 1 gün içinde tamamen kendi başıma (AI yardımı olmadan) geliştirip size teslim edebilirim. Böylece hem süreç hem de teknik tercihlerin gerekçelerini ayrıntılı şekilde gösterebilirim.
+## Verification and checks:
 
-Bu notlar, değerlendirme sürecine şeffaflık katmak için yazılmıştır. Yapay zeka araçlarını, daha hızlı sonuç üretmenin ötesinde; sistemsel düşünmeyi, tasarım kalitesini ve hata senaryolarını geniş perspektifle ele almayı güçlendiren yardımcılar olarak gördüm. Gerektiğinde aynı çözümü tamamen manuel şekilde de uygulayabilirim.
+- Monitored health status through service readiness/liveness endpoints.
+- Key end-to-end flows (e.g., order creation/cancellation, inventory approval/rejection, and notification) were tested via both HTTP and helper scripts (e.g., scripts/mq-publish.sh).
+- I monitored queues and message states through the RabbitMQ UI to verify retry and DLQ behavior.
+
+If the goal is to evaluate my software development skills, I would be happy to complete the task independently within a day and deliver it to you. This would allow me to provide a detailed explanation of the process and my technical choices.
+
+I wrote these notes to add transparency to the evaluation process. I don't just view AI tools as a way to produce results faster; I also see them as assistants that enhance systematic thinking, design quality, and the ability to address error scenarios with a wider perspective. If needed, I can also apply the same solution manually.
